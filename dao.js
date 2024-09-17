@@ -1,7 +1,9 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, 
         GetCommand, 
-        PutCommand, 
+        PutCommand,
+        ScanCommand,
+        QueryCommand, 
         UpdateCommand, 
         DeleteCommand
     } = require("@aws-sdk/lib-dynamodb");
@@ -13,7 +15,7 @@ const client = new DynamoDBClient({ region: "us-west-1" }); // replace with your
 const documentClient = DynamoDBDocumentClient.from(client);
 
 const TableName = "grocerytracker";
-// Get functions
+// Read functions
 async function getTest() {
     const testUuid = "e415d5c9-e946-4061-bcd9-c7fbf0e57e6d";
 
@@ -44,25 +46,73 @@ async function getItem(key) {
     }
 }
 
+async function scanList() {
+    const scanCommand = new ScanCommand({
+        TableName
+    });
+    try {
+        const data = await documentClient.send(scanCommand);
+        logger.info(JSON.stringify(data, null, 2));
+        return data.Items;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// Create functions
 async function createItem(item){
     item.uuid = uuidv4();
     const putCommand = new PutCommand({
         TableName,
         Item: item
     });
-
     try{
         const data = await documentClient.send(putCommand);
         logger.info(JSON.stringify(data, null, 2));
-        return item.uuid;
+        return data;
     } catch (err) {
         logger.error(err);
     }
 }
 
+// Delete functions
+async function deleteItem(uuid){
+    const deleteCommand = new DeleteCommand({
+        TableName,
+        Key: {uuid}
+    })
+    try{
+        const data = await documentClient.send(deleteCommand);
+        logger.info(JSON.stringify(data, null, 2));
+        return data;
+    } catch (err) {
+        logger.error(err);
+    }
+}
 
+//Update functions
+async function setPurchased(uuid) {
+    const updateCommand = new UpdateCommand({
+        TableName,
+        Key: {uuid},
+        UpdateExpression: "SET purchased = :purchased",
+        ExpressionAttributeValues: {
+            ":purchased": true
+        }
+    });
+    try {
+        const data = await documentClient.send(updateCommand);
+        logger.info(JSON.stringify(data, null, 2));
+        return data;
+    } catch (err) {
+        logger.error(err);
+    }
+}
 module.exports = {
     getTest,
     getItem,
-    createItem
+    createItem,
+    scanList,
+    deleteItem,
+    setPurchased
 }
