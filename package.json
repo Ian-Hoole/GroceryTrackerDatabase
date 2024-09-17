@@ -1,0 +1,26 @@
+{
+  "name": "grocerytrackerdatabase",
+  "version": "1.0.0",
+  "description": "Grocery Tracker with DynamoDB and AWS",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ian-Hoole/GroceryTrackerDatabase.git"
+  },
+  "author": "Ian Hoole",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ian-Hoole/GroceryTrackerDatabase/issues"
+  },
+  "homepage": "https://github.com/Ian-Hoole/GroceryTrackerDatabase#readme",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.651.1",
+    "@aws-sdk/lib-dynamodb": "^3.651.1",
+    "jest": "^29.7.0",
+    "uuid": "^10.0.0"
+  }
+}
